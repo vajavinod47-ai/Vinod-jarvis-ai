@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VINOD JARVIS AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#050b16;color:#e4f7ff;font-family:Arial,sans-serif;min-height:100vh;display:flex;justify-content:center;align-items:center}
+.app{width:100%;max-width:480px;padding:24px;text-align:center}
+h1{color:#42d9ff;letter-spacing:3px}
+.ring{width:150px;height:150px;border:2px solid #42d9ff;border-radius:50%;margin:35px auto;display:grid;place-items:center;box-shadow:0 0 30px #087ca5,inset 0 0 25px #087ca5;animation:pulse 3s infinite}
+.core{width:75px;height:75px;border:2px solid #8cecff;border-radius:50%;background:#10374c;box-shadow:0 0 25px #42d9ff}
+@keyframes pulse{50%{box-shadow:0 0 45px #42d9ff,inset 0 0 35px #087ca5}}
+#status{color:#80eaff;min-height:24px}
+#reply{white-space:pre-wrap;text-align:left;background:#0b1728;border:1px solid #17445b;border-radius:12px;padding:14px;min-height:80px;margin:20px 0}
+button,input{font-size:16px;border-radius:10px;padding:13px;border:1px solid #42d9ff}
+button{background:#10374c;color:white;cursor:pointer;margin:5px}
+input{width:100%;background:#07111f;color:white}
+.row{display:flex;margin-top:10px;gap:8px}
+.row input{flex:1;min-width:0}
+small{color:#93aabd}
+</style>
+</head>
+<body>
+<main class="app">
+<h1>VINOD JARVIS</h1>
+<p>PERSONAL AI ASSISTANT</p>
+<div class="ring"><div class="core"></div></div>
+<div id="status">SYSTEM READY</div>
+<div id="reply">Hello! I am VINOD JARVIS. Tap the microphone and speak.</div>
+<button onclick="listen()">🎙️ TALK TO JARVIS</button>
+<div class="row">
+<input id="command" placeholder="Type a command...">
+<button onclick="runCommand()">SEND</button>
+</div>
+<p><small>Voice recognition depends on browser support and permissions.</small></p>
+</main>
+<script>
+const statusEl=document.getElementById('status');
+const replyEl=document.getElementById('reply');
+function say(text){
+ replyEl.textContent=text;
+ if('speechSynthesis' in window){
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-IN';
+  speechSynthesis.speak(u);
+ }
+}
+function listen(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){say('Voice recognition is not supported in this browser. Please type your command.');return;}
+ const r=new SR();
+ r.lang='gu-IN';
+ r.onstart=()=>statusEl.textContent='LISTENING...';
+ r.onerror=()=>statusEl.textContent='MICROPHONE UNAVAILABLE';
+ r.onend=()=>statusEl.textContent='SYSTEM READY';
+ r.onresult=e=>{
+  const text=e.results[0][0].transcript;
+  document.getElementById('command').value=text;
+  handle(text);
+ };
+ r.start();
+}
+function runCommand(){
+ const text=document.getElementById('command').value.trim();
+ if(text)handle(text);
+}
+function handle(raw){
+ const t=raw.toLowerCase();
+ if(t.includes('youtube')){
+  say('Opening YouTube.');
+  window.open('https://www.youtube.com/','_blank');
+ }else if(t.includes('google')||t.includes('search')){
+  say('Opening Google search.');
+  window.open('https://www.google.com/','_blank');
+ }else if(t.includes('whatsapp')){
+  say('Opening WhatsApp. Sending messages requires your confirmation in WhatsApp.');
+  window.open('https://web.whatsapp.com/','_blank');
+ }else if(t.includes('instagram')){
+  say('Opening Instagram.');
+  window.open('https://www.instagram.com/','_blank');
+ }else if(t.includes('facebook')){
+  say('Opening Facebook.');
+  window.open('https://www.facebook.com/','_blank');
+ }else if(t.includes('hello')||t.includes('hi')||t.includes('kem cho')||t.includes('હેલો')){
+  say('Hello! Hu VINOD JARVIS chu. Tamari shu madad karu?');
+ }else{
+  say('I heard: '+raw+'. Online AI answers are not connected yet. This is the first prototype.');
+ }
+}
+</script>
+</body>
+</html>
